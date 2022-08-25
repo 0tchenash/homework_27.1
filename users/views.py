@@ -66,13 +66,15 @@ class UserCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         user_data = json.loads(request.body)
+        location_obj = Location.objects.get_or_create(name=''.join(user_data.get('location')))[0]
+
         user = User.objects.create(id=user_data['id'],
                                 username=user_data['username'],
                                 first_name=user_data['first_name'],
                                 last_name=user_data['last_name'],
                                 role=user_data['role'],
                                 age=user_data['age'],
-                                location_id=user_data['location']
+                                location=location_obj
         )
 
         return JsonResponse({'id': user.id, 
@@ -81,7 +83,7 @@ class UserCreateView(CreateView):
                             'last_name': user.last_name,
                             'role': user.role,
                             'age': user.age,
-                            'location': user.location.name}, status=200, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
+                            'location': user.location.name.split(', ')}, status=200, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
 
 @method_decorator(csrf_exempt, name="dispatch")
 class UserUpdateView(UpdateView):

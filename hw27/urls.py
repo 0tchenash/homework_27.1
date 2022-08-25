@@ -22,8 +22,7 @@ from ads.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index),
-    path('category/', include('ads.urls')),
-    path('ad/', include('ads.urlsad')),
+    path('ads/', include('ads.urls')),
     path('user/', include('users.urls'))
     # path('location/', include('users.urls'))
 

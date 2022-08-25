@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from ads.models import Category, Ad
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
+from users.models import User
 
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -140,12 +142,12 @@ class AdCreateView(CreateView):
         ad_data = json.loads(request.body)
         ad = Ad.objects.create(Id=ad_data['Id'],
                                 name=ad_data['name'],
-                                author_id=ad_data['author'],
+                                author_id=get_object_or_404(User, id=ad_data.get('author')),
                                 price=ad_data['price'],
                                 description=ad_data['description'],
                                 is_published=ad_data['is_published'],
                                 image=ad_data['image'],
-                                category_id=ad_data['category']
+                                category_id=get_object_or_404(Category, id=ad_data.get('category'))
         )
 
         return JsonResponse({'id': ad.Id, 
