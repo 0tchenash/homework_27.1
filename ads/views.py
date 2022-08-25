@@ -23,10 +23,8 @@ class CategoryListView(ListView):
 
         list = request.GET.get('list', None)
 
-        if list:
-            self.object_list = self.object_list.limit(list)
-
-        response = [{'id': category.id, 'name': category.name} for category in self.object_list]
+        categories =  self.object_list.order_by('name')
+        response = [{'id': category.id, 'name': category.name} for category in categories]
         return JsonResponse(response, status=200, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
 
 class CategoryDetailView(DetailView):
@@ -192,3 +190,19 @@ class AdDeleteView(DeleteView):
         super().delete(request, *args, **kwargs)
 
         return JsonResponse({'status': 'success'}, status=200)
+
+@method_decorator(csrf_exempt, name="dispatch")
+class AdImageView(UpdateView):
+    model = Ad
+    fields = ['name', 'image']
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        self.object.image = request.FILES['image']
+        self.object.save()
+
+        return JsonResponse({
+                'Id': self.object.Id,
+                "name": self.object.name,
+                "image": self.object.image.url if self.object.image else None}, status=200)

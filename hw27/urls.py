@@ -30,4 +30,8 @@ urlpatterns = [
 #     path('cat/<int:cid>/', get_cats_by_id),
 #     path('ads/', get_ads),
 #     path('ads/<int:aid>/', get_ads_by_id)
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,15 +1,15 @@
 
 from django.http import JsonResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from users.models import User, Location
-from django.core.paginator import Paginator
-import json
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from hw27 import settings
+from django.core.paginator import Paginator
 from django.db.models import Count
+from django.utils.decorators import method_decorator
 
+from hw27 import settings
+from users.models import User, Location
 
+import json
 
 # Create your views here.
 class UserListView(ListView):
@@ -59,62 +59,59 @@ class UserDetailView(DetailView):
         except: 
             return JsonResponse({"status": 404}, status=404)
 
-# @method_decorator(csrf_exempt, name="dispatch")
-# class AdCreateView(CreateView):
-#     model = Ad
-#     fields = ['id', 'name', 'author', 'description', 'category', 'image', 'is_published', 'price']
+@method_decorator(csrf_exempt, name="dispatch")
+class UserCreateView(CreateView):
+    model = User
+    fields = ['id', 'username', 'first_name', 'last_name', 'role', 'age', 'location']
 
-#     def post(self, request, *args, **kwargs):
-#         ad_data = json.loads(request.body)
-#         ad = Ad.objects.create(Id=ad_data['Id'],
-#                                 name=ad_data['name'],
-#                                 author_id=ad_data['author'],
-#                                 price=ad_data['price'],
-#                                 description=ad_data['description'],
-#                                 is_published=ad_data['is_published'],
-#                                 image=ad_data['image'],
-#                                 category_id=ad_data['category']
-#         )
+    def post(self, request, *args, **kwargs):
+        user_data = json.loads(request.body)
+        user = User.objects.create(id=user_data['id'],
+                                username=user_data['username'],
+                                first_name=user_data['first_name'],
+                                last_name=user_data['last_name'],
+                                role=user_data['role'],
+                                age=user_data['age'],
+                                location_id=user_data['location']
+        )
 
-#         return JsonResponse({'id': ad.Id, 
-#                             'name' : ad.name,
-#                             'author': ad.author,
-#                             'price': ad.price,
-#                             'description': ad.description,
-#                             'image': ad.image.url if ad.image else None,
-#                             'is_published': ad.is_published,
-#                             'category': ad.category}, status=200, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
+        return JsonResponse({'id': user.id, 
+                            'username' : user.username,
+                            'first_name': user.first_name,
+                            'last_name': user.last_name,
+                            'role': user.role,
+                            'age': user.age,
+                            'location': user.location.name}, status=200, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
 
-# @method_decorator(csrf_exempt, name="dispatch")
-# class AdUpdateView(UpdateView):
-#     model = Ad
-#     fields = ['Id', 'name', 'author', 'description', 'category', 'image', 'is_published', 'price']
+@method_decorator(csrf_exempt, name="dispatch")
+class UserUpdateView(UpdateView):
+    model = User
+    fields = ['id', 'username', 'first_name', 'last_name', 'role', 'age', 'location']
 
-#     def post(self, request, *args, **kwargs):
-#         super().post(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
         
-#         ad_data = json.loads(request.body)
+        user_data = json.loads(request.body)
 
-#         self.object.Id = ad_data['Id']
-#         self.object.name = ad_data['name']
-#         self.object.author_id = ad_data['author']
-#         self.object.price = ad_data['price']
-#         self.object.description = ad_data['description']
-#         self.object.image = ad_data['image']
-#         self.object.is_published = ad_data['is_published']
-#         self.object.category_id = ad_data['category']
+        self.object.id = user_data['id']
+        self.object.username = user_data['username']
+        self.object.first_name = user_data['first_name']
+        self.object.last_name = user_data['last_name']
+        self.object.role = user_data['role']
+        self.object.age = user_data['age']
+        self.object.location_id = user_data['location']
 
-#         self.object.save()
+        self.object.save()
 
-#         return JsonResponse({"id": self.object.Id,
-#         "name": self.object.name}, status=200, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
+        return JsonResponse({"id": self.object.id,
+        "name": self.object.username}, status=200, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
 
-# @method_decorator(csrf_exempt, name="dispatch")
-# class AdDeleteView(DeleteView):
-#     model = Ad
-#     success_url = "/"
+@method_decorator(csrf_exempt, name="dispatch")
+class UserDeleteView(DeleteView):
+    model = User
+    success_url = "/"
 
-#     def delete(self, request, *args, **kwargs):
-#         super().delete(request, *args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
 
-#         return JsonResponse({'status': 'success'}, status=200)
+        return JsonResponse({'status': 'success'}, status=200)
