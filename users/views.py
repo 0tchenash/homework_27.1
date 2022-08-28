@@ -68,7 +68,7 @@ class UserCreateView(CreateView):
         user_data = json.loads(request.body)
         location_obj = Location.objects.get_or_create(name=''.join(user_data.get('location')))[0]
 
-        user = User.objects.create(id=user_data['id'],
+        user = User.objects.create(
                                 username=user_data['username'],
                                 first_name=user_data['first_name'],
                                 last_name=user_data['last_name'],
@@ -95,7 +95,7 @@ class UserUpdateView(UpdateView):
         
         user_data = json.loads(request.body)
 
-        self.object.id = user_data['id']
+
         self.object.username = user_data['username']
         self.object.first_name = user_data['first_name']
         self.object.last_name = user_data['last_name']
